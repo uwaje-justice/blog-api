@@ -8,6 +8,9 @@ const getUserId = (req: Request) => {
   return req.user.id;
 };
 
+// route params are typed string | string[] in Express 5; ours is always a string
+const getPostId = (req: Request) => String(req.params.id);
+
 export const createPost = async (req: Request, res: Response) => {
   const post = await postService.createPost(getUserId(req), req.body);
   return res.status(201).json({ post });
@@ -24,16 +27,16 @@ export const getMyPosts = async (req: Request, res: Response) => {
 };
 
 export const getPost = async (req: Request, res: Response) => {
-  const post = await postService.getPublishedPost(req.params.id);
+  const post = await postService.getPublishedPost(getPostId(req));
   return res.status(200).json({ post });
 };
 
 export const updatePost = async (req: Request, res: Response) => {
-  const post = await postService.updatePost(req.params.id, getUserId(req), req.body);
+  const post = await postService.updatePost(getPostId(req), getUserId(req), req.body);
   return res.status(200).json({ post });
 };
 
 export const deletePost = async (req: Request, res: Response) => {
-  await postService.deletePost(req.params.id, getUserId(req));
+  await postService.deletePost(getPostId(req), getUserId(req));
   return res.status(204).send();
 };
