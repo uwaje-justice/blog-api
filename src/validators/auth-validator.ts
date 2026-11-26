@@ -1,6 +1,17 @@
 import { body } from "express-validator";
 
-const registerValidator = [
+export const loginValidator = [
+  body("email").trim().toLowerCase().isEmail().withMessage("Must be a valid email address"),
+
+  body("password")
+    .isString()
+    .withMessage("Password must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("Password is required"),
+];
+
+export const registerValidator = [
   body("email")
     .trim()
     .toLowerCase()
@@ -23,5 +34,3 @@ const registerValidator = [
     .matches(/\d/)
     .withMessage("Password must contain a number"),
 ];
-
-export default registerValidator;

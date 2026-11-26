@@ -1,2 +1,2 @@
-export { default as loginValidator } from "./login-validator.js";
-export { default as registerValidator } from "./registerValidator.js";
+export * from "./auth-validator.js";
+export * from "./post-validator.js";
