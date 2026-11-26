@@ -13,4 +13,26 @@ model User {
   passwordHash String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  posts        Post[]
+}
+
+model Post {
+  id        String    @id @default(uuid())
+  text      String
+  published Boolean   @default(true)
+  author    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  email     String?
+  text      String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
