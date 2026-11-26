@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 
 import { AppError } from "../errors/index.js";
-import { passport } from "../lib/passport.js";
+import { passport } from "../lib/index.js";
 
-export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+const requireAuth = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("jwt", { session: false }, (err: unknown, user: Express.User | false) => {
     if (err) {
       next(err);
@@ -19,3 +19,5 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
     next();
   })(req, res, next);
 };
+
+export default requireAuth;

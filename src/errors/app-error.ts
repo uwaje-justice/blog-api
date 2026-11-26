@@ -1,8 +1,8 @@
 class AppError extends Error {
   readonly statusCode: number;
-  readonly errors?: unknown;
+  readonly errors: Record<string, string>;
 
-  constructor(statusCode: number, message: string, errors?: unknown) {
+  constructor(statusCode: number, message: string, errors = {}) {
     super(message);
     this.statusCode = statusCode;
     this.errors = errors;
