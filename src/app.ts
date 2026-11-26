@@ -1,10 +1,11 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
-import { passport } from "./lib/passport.js";
+import { passport } from "./lib/index.js";
 import { errorHandler, notFoundHandler } from "./middleware/index.js";
-import healthRouter from "./routes/health-router.js";
+import { authRouter, healthRouter } from "./routes/index.js";
 
 const app = express();
 
@@ -12,9 +13,11 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(passport.initialize());
 
-app.use(healthRouter);
+app.use("/health", healthRouter);
+app.use("/api/auth", authRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
