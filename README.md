@@ -62,8 +62,28 @@ List endpoints accept `?page=` and `?pageSize=`. Login sets an httpOnly cookie, 
 | `npm run test:watch`   | Run tests in watch mode                       |
 | `npm run db:generate`  | Generate the Prisma client                    |
 | `npm run db:migrate`   | Create and apply migrations to both databases |
+| `npm run db:deploy`    | Apply committed migrations once (for hosting) |
 | `npm run db:push`      | Push schema changes without a migration       |
 | `npm run db:studio`    | Open Prisma Studio                            |
+
+## Deployment
+
+`render.yaml` is a Render Blueprint for the free plan. Push this repo to GitHub, then in Render choose **New > Blueprint** and select the repository. Set these values in the Render dashboard when asked:
+
+- `DATABASE_URL` — the connection string from your Neon project.
+- `JWT_SECRET` — a long random string.
+- `AUTHOR_CLIENT` — the full URL of the author front-end, for example `https://author.example.com`.
+- `PUBLIC_CLIENT` — the full URL of the public front-end, for example `https://blog.example.com`.
+
+Render sets `NODE_ENV=production` and `PORT` for you. The build installs packages, generates the Prisma client, builds TypeScript, and applies migrations to Neon. Keep both front-ends in the `AUTHOR_CLIENT` and `PUBLIC_CLIENT` values, or requests from them will be blocked.
+
+In production the login cookie uses `SameSite=None` and `Secure`, so each front-end must send credentials with every request:
+
+```js
+fetch("https://your-api.onrender.com/api/posts", { credentials: "include" });
+```
+
+The `render.yaml` uses the Frankfurt region to sit near the Neon database in Frankfurt. Change both if you prefer another region.
 
 ## Folder map
 
@@ -73,7 +93,7 @@ src/
   index.ts          Server entry point
   controllers/      Request handlers
   errors/           AppError used by the error handlers
-  lib/              Prisma client, env helper, Passport, pagination and request helpers
+  lib/              Prisma client, env helper, CORS, Passport, pagination and request helpers
   middleware/       requireAuth guard, 404 and error handlers
   routes/           Express routers
 prisma/

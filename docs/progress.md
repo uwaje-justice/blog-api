@@ -4,12 +4,12 @@
 
 ## Working on
 
-All template names and text are replaced with blog API names.
+The backend is prepared for Render with a Neon database and cross-site client access.
 
 ## Done
 
-Renamed the package and README, fixed the stale script names, documented the test database and author, and all 69 tests and checks pass.
+Added client-origin CORS and production cross-site cookies, a Render blueprint, a deploy migration script, and CORS tests; 72 tests and all checks pass.
 
 ## Next
 
-Build the two front-ends after the API is stable.
+Add a rate limiter, then deploy the API.
