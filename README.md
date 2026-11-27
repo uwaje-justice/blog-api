@@ -46,6 +46,8 @@ The health endpoint is at `GET /health`.
 
 List endpoints accept `?page=` and `?pageSize=`. Login sets an httpOnly cookie, so browser clients must send credentials with each request. Visitors can read and add comments on published posts, and only the post author can edit or delete those comments.
 
+Rate limits are 100 requests per 15 minutes per IP on `/api`, and 10 per 15 minutes on `POST /api/auth/register` and `POST /api/auth/login`. Requests over the limit return `429` with a JSON message. The limits can be changed with `RATE_LIMIT_MAX` and `AUTH_RATE_LIMIT_MAX`.
+
 ## Scripts
 
 | Command                | What it does                                  |
@@ -93,7 +95,7 @@ src/
   index.ts          Server entry point
   controllers/      Request handlers
   errors/           AppError used by the error handlers
-  lib/              Prisma client, env helper, CORS, Passport, pagination and request helpers
+  lib/              Prisma client, env helper, CORS, rate limits, Passport, pagination and request helpers
   middleware/       requireAuth guard, 404 and error handlers
   routes/           Express routers
 prisma/

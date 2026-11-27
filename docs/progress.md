@@ -4,12 +4,12 @@
 
 ## Working on
 
-The backend is prepared for Render with a Neon database and cross-site client access.
+The backend now has rate limits before deployment.
 
 ## Done
 
-Added client-origin CORS and production cross-site cookies, a Render blueprint, a deploy migration script, and CORS tests; 72 tests and all checks pass.
+Added an API limit of 100 requests per 15 minutes and a stricter auth limit of 10, with a unit test and docs; deployment prep and CORS are already committed.
 
 ## Next
 
-Add a rate limiter, then deploy the API.
+Run the full checks, commit the rate limiter, then deploy the API.
