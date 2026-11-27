@@ -4,12 +4,12 @@
 
 ## Working on
 
-Preparing the template for its initial commit.
+Using matchedData for validated params and query values is complete.
 
 ## Done
 
-The template is clean and ready with auth in src/lib/passport.ts and requireAuth in src/middleware/auth.ts, and all checks pass.
+Replaced all req.params and req.query reads in post-controller with matchedData, recorded the rule in work-with-me, and all 50 tests plus typecheck, lint, build and format pass.
 
 ## Next
 
-Use this template in a new project and start adding feature routes.
+Commit the changes in small commits when Uwaje is ready.
