@@ -23,8 +23,8 @@
     "db:studio": "prisma studio"
   },
   "keywords": [],
-  "author": "Uwaje Igechukwuka Justice",
-  "license": "ISC",
+  "author": "Uwaje Justice",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",
