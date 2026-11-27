@@ -13,6 +13,8 @@ export default defineConfig({
       JWT_SECRET: "test-secret-test-secret-test-secret",
       AUTHOR_CLIENT: "http://localhost:5173",
       PUBLIC_CLIENT: "http://localhost:5174",
+      RATE_LIMIT_MAX: "1000",
+      AUTH_RATE_LIMIT_MAX: "1000",
     },
   },
 });
