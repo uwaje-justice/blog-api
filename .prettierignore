@@ -3,4 +3,3 @@ dist
 coverage
 src/generated
 package-lock.json
-docs/plan.md

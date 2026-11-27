@@ -4,12 +4,12 @@
 
 ## Working on
 
-Using matchedData for validated params and query values is complete.
+The blog API plan is written from the official Odin Project requirements.
 
 ## Done
 
-Replaced all req.params and req.query reads in post-controller with matchedData, recorded the rule in work-with-me, and all 50 tests plus typecheck, lint, build and format pass.
+Checked that comments are not implemented yet, wrote docs/plan.md with the current state, API contract, comment plan, tests and build order, and all checks pass.
 
 ## Next
 
-Commit the changes in small commits when Uwaje is ready.
+Implement the comment feature in the small slices listed in docs/plan.md when Uwaje is ready.
