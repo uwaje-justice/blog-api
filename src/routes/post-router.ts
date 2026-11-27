@@ -1,8 +1,10 @@
 import { Router } from "express";
 
-import { postController } from "../controllers/index.js";
+import { commentController, postController } from "../controllers/index.js";
 import { requireAuth, validate } from "../middleware/index.js";
 import {
+  commentPostIdValidator,
+  createCommentValidator,
   createPostValidator,
   paginationValidator,
   postIdValidator,
@@ -13,6 +15,14 @@ const router = Router();
 
 router.get("/", paginationValidator, validate, postController.getPublishedPosts);
 router.get("/mine", requireAuth, paginationValidator, validate, postController.getMyPosts);
+router.get(
+  "/:postId/comments",
+  commentPostIdValidator,
+  paginationValidator,
+  validate,
+  commentController.listComments,
+);
+router.post("/:postId/comments", createCommentValidator, validate, commentController.createComment);
 router.get("/:id", postIdValidator, validate, postController.getPost);
 
 router.post("/", requireAuth, createPostValidator, validate, postController.createPost);
