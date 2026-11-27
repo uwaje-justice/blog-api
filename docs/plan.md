@@ -83,13 +83,6 @@ Rules for comments:
 - A comment on someone else's post does not give that reader edit rights. Only the post author can manage comments on that post.
 - The comment list uses the same pagination shape as posts.
 
-## Authentication decision
-
-The Odin lesson asks for JWTs in an `Authorization: Bearer` header stored in localStorage.
-This API currently uses an httpOnly cookie.
-
-Recommendation: keep the cookie. JavaScript cannot read it, so a script cannot steal the token. The front-ends must send credentials with requests. This difference from the lesson is deliberate.
-
 ## Testing
 
 - `tests/unit/` holds service and middleware tests.
