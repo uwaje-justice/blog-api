@@ -5,7 +5,6 @@ import { AppError } from "../errors/index.js";
 import { db } from "../lib/index.js";
 
 const SALT_ROUNDS = 12;
-// used to equalise timing when the email doesn't exist
 const DUMMY_HASH = bcrypt.hashSync("dummy-password", SALT_ROUNDS);
 
 const isUniqueViolation = (err: unknown) =>
@@ -37,7 +36,6 @@ export const registerUser = async (email: string, password: string) => {
   }
 };
 
-// Used by the passport local strategy. Returns the user or null.
 export const verifyCredentials = async (email: string, password: string) => {
   const user = await db.user.findUnique({ where: { email } });
 
@@ -50,6 +48,6 @@ export const verifyCredentials = async (email: string, password: string) => {
 
 export const getUserById = (id: string | number) =>
   db.user.findUnique({
-    where: { id: id as never }, // remove the cast if your id type matches
+    where: { id: id as never },
     select: { id: true, email: true },
   });

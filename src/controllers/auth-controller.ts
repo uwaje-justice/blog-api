@@ -16,7 +16,7 @@ const cookieOptions = {
 const setAuthCookie = (res: Response, userId: string | number) =>
   res.cookie(COOKIE_NAME, authService.signToken(userId), {
     ...cookieOptions,
-    maxAge: 60 * 60 * 1000, // match the JWT expiry
+    maxAge: 60 * 60 * 1000,
   });
 
 export const register = async (req: Request, res: Response) => {
