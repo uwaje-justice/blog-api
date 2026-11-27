@@ -1,7 +1,23 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 
 export const postIdValidator = [
   param("id").isString().trim().notEmpty().withMessage("Invalid post id"),
+];
+
+export const paginationValidator = [
+  query("page")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Page must be a positive integer")
+    .bail()
+    .toInt(),
+
+  query("pageSize")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Page size must be between 1 and 100")
+    .bail()
+    .toInt(),
 ];
 
 export const createPostValidator = [

@@ -2,12 +2,17 @@ import { Router } from "express";
 
 import { postController } from "../controllers/index.js";
 import { requireAuth, validate } from "../middleware/index.js";
-import { createPostValidator, postIdValidator, updatePostValidator } from "../validators/index.js";
+import {
+  createPostValidator,
+  paginationValidator,
+  postIdValidator,
+  updatePostValidator,
+} from "../validators/index.js";
 
 const router = Router();
 
-router.get("/", postController.getPublishedPosts);
-router.get("/mine", requireAuth, postController.getMyPosts);
+router.get("/", paginationValidator, validate, postController.getPublishedPosts);
+router.get("/mine", requireAuth, paginationValidator, validate, postController.getMyPosts);
 router.get("/:id", postIdValidator, validate, postController.getPost);
 
 router.post("/", requireAuth, createPostValidator, validate, postController.createPost);

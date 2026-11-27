@@ -12,6 +12,31 @@ const postSelect = {
 } as const;
 
 type PostInput = { title: string; content: string; published?: boolean };
+type PaginationInput = { page?: number; pageSize?: number };
+type PostFilter = { published?: boolean; authorId?: string };
+
+const DEFAULT_PAGE_SIZE = 20;
+
+const listPosts = async (
+  where: PostFilter,
+  { page = 1, pageSize = DEFAULT_PAGE_SIZE }: PaginationInput = {},
+) => {
+  const [posts, totalItems] = await Promise.all([
+    prisma.post.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      select: postSelect,
+    }),
+    prisma.post.count({ where }),
+  ]);
+
+  return {
+    posts,
+    pagination: { page, pageSize, totalItems, totalPages: Math.ceil(totalItems / pageSize) },
+  };
+};
 
 export const createPost = (authorId: string, { title, content, published }: PostInput) =>
   prisma.post.create({
@@ -19,30 +44,19 @@ export const createPost = (authorId: string, { title, content, published }: Post
     select: postSelect,
   });
 
-export const listPublishedPosts = () =>
-  prisma.post.findMany({
-    where: { published: true },
-    orderBy: { createdAt: "desc" },
-    select: postSelect,
-  });
+export const listPublishedPosts = (pagination: PaginationInput = {}) =>
+  listPosts({ published: true }, pagination);
 
-export const listPostsByAuthor = (authorId: string) =>
-  prisma.post.findMany({
-    where: { authorId },
-    orderBy: { createdAt: "desc" },
-    select: postSelect,
-  });
+export const listPostsByAuthor = (authorId: string, pagination: PaginationInput = {}) =>
+  listPosts({ authorId }, pagination);
 
 export const getPublishedPost = async (id: string) => {
   const post = await prisma.post.findUnique({ where: { id }, select: postSelect });
 
-  // unpublished posts look like they don't exist
   if (!post || !post.published) throw new AppError(404, "Post not found");
   return post;
 };
 
-// 404 if missing, or if it's someone else's draft.
-// 403 if it's someone else's published post.
 const assertOwner = async (id: string, userId: string) => {
   const post = await prisma.post.findUnique({ where: { id }, select: postSelect });
 
@@ -62,7 +76,7 @@ export const updatePost = async (
   await assertOwner(id, userId);
   return prisma.post.update({
     where: { id },
-    data: { title, content, published }, // undefined fields are ignored by Prisma
+    data: { title, content, published },
     select: postSelect,
   });
 };

@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { matchedData } from "express-validator";
 
 import { AppError } from "../errors/index.js";
 import { postService } from "../services/index.js";
@@ -8,22 +9,28 @@ const getUserId = (req: Request) => {
   return req.user.id;
 };
 
-// route params are typed string | string[] in Express 5; ours is always a string
-const getPostId = (req: Request) => String(req.params.id);
+const getPostId = (req: Request) => matchedData<{ id: string }>(req, { locations: ["params"] }).id;
+
+const getPagination = (req: Request) => {
+  const { page = 1, pageSize = 20 } = matchedData<{ page?: number; pageSize?: number }>(req, {
+    locations: ["query"],
+  });
+  return { page, pageSize };
+};
 
 export const createPost = async (req: Request, res: Response) => {
   const post = await postService.createPost(getUserId(req), req.body);
   return res.status(201).json({ post });
 };
 
-export const getPublishedPosts = async (_req: Request, res: Response) => {
-  const posts = await postService.listPublishedPosts();
-  return res.status(200).json({ posts });
+export const getPublishedPosts = async (req: Request, res: Response) => {
+  const result = await postService.listPublishedPosts(getPagination(req));
+  return res.status(200).json(result);
 };
 
 export const getMyPosts = async (req: Request, res: Response) => {
-  const posts = await postService.listPostsByAuthor(getUserId(req));
-  return res.status(200).json({ posts });
+  const result = await postService.listPostsByAuthor(getUserId(req), getPagination(req));
+  return res.status(200).json(result);
 };
 
 export const getPost = async (req: Request, res: Response) => {
