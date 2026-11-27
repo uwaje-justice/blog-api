@@ -1,13 +1,16 @@
+import "dotenv/config";
+
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    include: ["src/**/*.test.ts"],
+    include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts"],
     exclude: ["dist/**", "node_modules/**"],
-    passWithNoTests: true,
+    fileParallelism: false,
     env: {
-      DATABASE_URL: "postgresql://user:password@localhost:5432/mydb?schema=public",
-      JWT_SECRET: "test-secret",
+      NODE_ENV: "test",
+      DATABASE_URL: process.env.TEST_DATABASE_URL ?? "",
+      JWT_SECRET: "test-secret-test-secret-test-secret",
     },
   },
 });
