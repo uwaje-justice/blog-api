@@ -4,12 +4,12 @@
 
 ## Working on
 
-The README now documents the whole project for readers.
+The API is deployed on Render and reachable on the live URL.
 
 ## Done
 
-Rewrote the README, changed the license to MIT, and corrected the author name; all checks pass.
+Fixed the Render build, deployed to https://blog-api-uqms.onrender.com, verified the health and posts endpoints, and updated the README.
 
 ## Next
 
-Add a screenshot and the live URL after deployment, then commit the docs.
+Build the two front-ends and replace the placeholder CORS URLs in Render.

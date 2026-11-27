@@ -4,7 +4,7 @@ A REST API for a blog where users write posts and readers comment on them.
 
 ![Screenshot of the Blog API running](./docs/screenshot.png)
 
-**Live:** not deployed yet. Add the Render URL here after deployment.
+**Live:** https://blog-api-uqms.onrender.com
 
 ## Why I built it
 
@@ -103,7 +103,7 @@ Tests use the database at `TEST_DATABASE_URL` and clear its tables between tests
 
 `render.yaml` is a Render Blueprint for the free plan. Push this repository to GitHub, then in Render choose **New > Blueprint** and select it. Render asks for `DATABASE_URL`, `JWT_SECRET`, `AUTHOR_CLIENT`, and `PUBLIC_CLIENT`; enter them in the dashboard, not in the repository. The blueprint sets `NODE_ENV=production` and uses the Frankfurt region to sit near the Neon database.
 
-Each build installs packages, generates the Prisma client, compiles TypeScript, and runs `npm run db:deploy`. That command applies committed migrations and skips ones already applied, so it is safe to run on every deploy.
+Each build installs packages including dev dependencies, generates the Prisma client, compiles TypeScript, and runs `npm run db:deploy`. That command applies committed migrations and skips ones already applied, so it is safe to run on every deploy. The free plan sleeps when idle, so the first request after a break may take a few seconds.
 
 In production the login cookie uses `SameSite=None` and `Secure`, so each front-end must send credentials with every request:
 
