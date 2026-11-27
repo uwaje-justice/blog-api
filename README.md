@@ -1,83 +1,109 @@
 # Blog API
 
-A REST API for the Odin Project blog API project. Users can register, write and publish posts, and comment on published posts.
-Built with Express 5, TypeScript, Prisma 7, Postgres, and Passport auth.
+A REST API for a blog where users write posts and readers comment on them.
 
-## Quick start (local Postgres)
+![Screenshot of the Blog API running](./docs/screenshot.png)
 
-1. Clone this repository and enter the folder.
-2. Install dependencies. The `postinstall` script generates the Prisma client.
+**Live:** not deployed yet. Add the Render URL here after deployment.
 
-   ```bash
-   npm install
-   ```
+## Why I built it
 
-3. Create your local environment file and fill in the values.
+This is the backend for The Odin Project blog API exercise. The idea is to run one API that serves two separate websites: a public site for reading and commenting, and a private site for writing and publishing. Keeping the data in one API means both sites share the same rules, while each can be built and deployed on its own.
 
-   ```bash
-   cp .env.example .env
-   ```
+## Features
 
-   - `DATABASE_URL` — your local Postgres connection string.
-   - `TEST_DATABASE_URL` — a separate Postgres database used by the tests.
-   - `JWT_SECRET` — a long random string used to sign JWTs.
+- Register, log in, log out, and read the current user.
+- Create posts, keep them as drafts, publish them, edit them, and delete them. Only the author can change a post.
+- Read published posts without logging in. Other users' drafts stay hidden.
+- Add comments to published posts without an account. Only the post author can edit or delete those comments.
+- Paginate post and comment lists with `?page=` and `?pageSize=`.
+- Send the login token in an httpOnly cookie, so JavaScript cannot read it.
+- Allow only the two configured front-end origins to call the API with cookies.
+- Limit requests per IP, with a tighter limit on login and registration.
+- Validate every request body, parameter, and query value before using it.
 
-4. Create the database tables from the schema.
+## Tech stack
 
-   ```bash
-   npm run db:migrate -- --name init
-   ```
+- Express 5 and TypeScript
+- Prisma 7 with PostgreSQL
+- Passport for local login and JWT authentication
+- express-validator, helmet, and express-rate-limit
+- Vitest and Supertest for tests
+- ESLint and Prettier for code quality
+- Neon for the hosted database and Render for hosting
 
-   This also migrates the test database through the `postdb:migrate` hook.
+## Run it locally
 
-5. Start the server.
+You need Node.js and two PostgreSQL databases: one for the app and one for tests.
 
-   ```bash
-   npm run dev
-   ```
+```bash
+git clone git@github.com:uwaje-justice/blog-api.git
+cd blog-api
+cp .env.example .env
+npm install
+npm run db:migrate -- --name init
+npm run dev
+```
 
-The health endpoint is at `GET /health`.
+Fill in `.env` before running the migration. Never commit this file.
 
-## API endpoints
+Required environment variables:
+
+| Variable            | What it is for                               |
+| ------------------- | -------------------------------------------- |
+| `DATABASE_URL`      | Connection string for the app database       |
+| `TEST_DATABASE_URL` | Connection string for the test database      |
+| `JWT_SECRET`        | Long random string used to sign login tokens |
+| `AUTHOR_CLIENT`     | Full URL of the writing front-end            |
+| `PUBLIC_CLIENT`     | Full URL of the reading front-end            |
+
+Optional environment variables:
+
+| Variable              | What it is for                                                 |
+| --------------------- | -------------------------------------------------------------- |
+| `PORT`                | Server port, defaults to `3000`                                |
+| `RATE_LIMIT_MAX`      | API requests per IP per 15 minutes, defaults to 100            |
+| `AUTH_RATE_LIMIT_MAX` | Login and registration attempts per 15 minutes, defaults to 10 |
+
+`npm run db:migrate` also migrates the test database through its post-migration hook. The health check is at `GET /health`.
+
+## API overview
 
 - Auth: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`.
 - Posts: `GET /api/posts`, `GET /api/posts/mine`, `GET /api/posts/:id`, `POST /api/posts`, `PATCH /api/posts/:id`, `DELETE /api/posts/:id`.
 - Comments: `GET /api/posts/:postId/comments`, `POST /api/posts/:postId/comments`, `PATCH /api/comments/:id`, `DELETE /api/comments/:id`.
 
-List endpoints accept `?page=` and `?pageSize=`. Login sets an httpOnly cookie, so browser clients must send credentials with each request. Visitors can read and add comments on published posts, and only the post author can edit or delete those comments.
+List responses include a `pagination` object. Errors use `{ "message": "...", "errors": {} }`. A request over the rate limit returns `429`.
 
-Rate limits are 100 requests per 15 minutes per IP on `/api`, and 10 per 15 minutes on `POST /api/auth/register` and `POST /api/auth/login`. Requests over the limit return `429` with a JSON message. The limits can be changed with `RATE_LIMIT_MAX` and `AUTH_RATE_LIMIT_MAX`.
+Example: register, then publish a post with the saved cookie.
 
-## Scripts
+```bash
+curl -i -c cookies.txt -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"writer@example.com","password":"blog12345"}'
 
-| Command                | What it does                                  |
-| ---------------------- | --------------------------------------------- |
-| `npm run dev`          | Run the server with hot reload                |
-| `npm run build`        | Compile TypeScript to `dist/`                 |
-| `npm run start`        | Run the compiled server                       |
-| `npm run typecheck`    | Check types without emitting files            |
-| `npm run lint`         | Check code with ESLint                        |
-| `npm run lint:fix`     | Fix ESLint issues where possible              |
-| `npm run format`       | Format files with Prettier                    |
-| `npm run format:check` | Check formatting                              |
-| `npm test`             | Run tests                                     |
-| `npm run test:watch`   | Run tests in watch mode                       |
-| `npm run db:generate`  | Generate the Prisma client                    |
-| `npm run db:migrate`   | Create and apply migrations to both databases |
-| `npm run db:deploy`    | Apply committed migrations once (for hosting) |
-| `npm run db:push`      | Push schema changes without a migration       |
-| `npm run db:studio`    | Open Prisma Studio                            |
+curl -b cookies.txt -X POST http://localhost:3000/api/posts \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Hello","content":"My first post","published":true}'
+```
+
+## Tests and checks
+
+```bash
+npm test
+npm run typecheck
+npm run lint
+npm run build
+npm run format:check
+```
+
+Tests use the database at `TEST_DATABASE_URL` and clear its tables between tests, so never point that variable at a database with real data. Unit tests live in `tests/unit/` and router tests in `tests/integration/`.
 
 ## Deployment
 
-`render.yaml` is a Render Blueprint for the free plan. Push this repo to GitHub, then in Render choose **New > Blueprint** and select the repository. Set these values in the Render dashboard when asked:
+`render.yaml` is a Render Blueprint for the free plan. Push this repository to GitHub, then in Render choose **New > Blueprint** and select it. Render asks for `DATABASE_URL`, `JWT_SECRET`, `AUTHOR_CLIENT`, and `PUBLIC_CLIENT`; enter them in the dashboard, not in the repository. The blueprint sets `NODE_ENV=production` and uses the Frankfurt region to sit near the Neon database.
 
-- `DATABASE_URL` — the connection string from your Neon project.
-- `JWT_SECRET` — a long random string.
-- `AUTHOR_CLIENT` — the full URL of the author front-end, for example `https://author.example.com`.
-- `PUBLIC_CLIENT` — the full URL of the public front-end, for example `https://blog.example.com`.
-
-Render sets `NODE_ENV=production` and `PORT` for you. The build installs packages, generates the Prisma client, builds TypeScript, and applies migrations to Neon. Keep both front-ends in the `AUTHOR_CLIENT` and `PUBLIC_CLIENT` values, or requests from them will be blocked.
+Each build installs packages, generates the Prisma client, compiles TypeScript, and runs `npm run db:deploy`. That command applies committed migrations and skips ones already applied, so it is safe to run on every deploy.
 
 In production the login cookie uses `SameSite=None` and `Secure`, so each front-end must send credentials with every request:
 
@@ -85,28 +111,12 @@ In production the login cookie uses `SameSite=None` and `Secure`, so each front-
 fetch("https://your-api.onrender.com/api/posts", { credentials: "include" });
 ```
 
-The `render.yaml` uses the Frankfurt region to sit near the Neon database in Frankfurt. Change both if you prefer another region.
+## Links
 
-## Folder map
+- Author: Uwaje Justice
+- Source code: https://github.com/uwaje-justice/blog-api
+- Issues: https://github.com/uwaje-justice/blog-api/issues
 
-```
-src/
-  app.ts            Express app setup and middleware order
-  index.ts          Server entry point
-  controllers/      Request handlers
-  errors/           AppError used by the error handlers
-  lib/              Prisma client, env helper, CORS, rate limits, Passport, pagination and request helpers
-  middleware/       requireAuth guard, 404 and error handlers
-  routes/           Express routers
-prisma/
-  schema.prisma     Database schema for users, posts, and comments
-tests/              Vitest unit and integration tests
-```
+## License
 
-## Adding a feature
-
-1. Add a router in `src/routes/` and a controller in `src/controllers/`.
-2. Mount the router in `src/app.ts` above the not-found handler.
-3. Use `AppError` from `src/errors/` for expected errors.
-4. Use `requireAuth` from `src/middleware/` on routes that need a logged-in user.
-5. After changing `prisma/schema.prisma`, run `npm run db:generate` and create a migration.
+MIT
