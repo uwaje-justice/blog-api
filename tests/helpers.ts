@@ -14,6 +14,11 @@ export const createUser = (email = "user@example.com") =>
     select: { id: true, email: true },
   });
 
+export const createComment = (postId: string, overrides: Record<string, unknown> = {}) =>
+  prisma.comment.create({
+    data: { text: "A comment", postId, ...overrides },
+  });
+
 export const authCookie = (userId: string) =>
   `token=${jwt.sign({ sub: userId }, process.env.JWT_SECRET!, { expiresIn: "1h" })}`;
 
