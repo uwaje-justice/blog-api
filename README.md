@@ -35,6 +35,14 @@ Start a new project from this template and go straight to building features.
 
 The example health endpoint is at `GET /health`.
 
+## API endpoints
+
+- Auth: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`.
+- Posts: `GET /api/posts`, `GET /api/posts/mine`, `GET /api/posts/:id`, `POST /api/posts`, `PATCH /api/posts/:id`, `DELETE /api/posts/:id`.
+- Comments: `GET /api/posts/:postId/comments`, `POST /api/posts/:postId/comments`, `PATCH /api/comments/:id`, `DELETE /api/comments/:id`.
+
+List endpoints accept `?page=` and `?pageSize=`. Login sets an httpOnly cookie, so browser clients must send credentials with each request. Visitors can read and add comments on published posts, and only the post author can edit or delete those comments.
+
 ## Scripts
 
 | Command                   | What it does                             |
@@ -62,12 +70,12 @@ src/
   index.ts          Server entry point
   controllers/      Request handlers
   errors/           AppError used by the error handlers
-  lib/              Prisma client, env helper, and Passport strategies
+  lib/              Prisma client, env helper, Passport, pagination and request helpers
   middleware/       requireAuth guard, 404 and error handlers
   routes/           Express routers
 prisma/
-  schema.prisma     Database schema (includes a minimal User model)
-tests/              Vitest tests (create this folder when you add your first test)
+  schema.prisma     Database schema for users, posts, and comments
+tests/              Vitest unit and integration tests
 ```
 
 ## Adding a feature

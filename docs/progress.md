@@ -4,12 +4,12 @@
 
 ## Working on
 
-The blog API plan is written from the official Odin Project requirements.
+The comment feature is complete and ready to commit.
 
 ## Done
 
-Checked that comments are not implemented yet, wrote docs/plan.md with the current state, API contract, comment plan, tests and build order, and all checks pass.
+Added comment service, validators, controller and routes, shared pagination and request helpers through the lib barrel, unit and integration tests, and API docs; all 69 tests and checks pass.
 
 ## Next
 
-Implement the comment feature in the small slices listed in docs/plan.md when Uwaje is ready.
+Build the two front-ends after the API is stable.
