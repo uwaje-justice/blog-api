@@ -4,11 +4,11 @@
 
 ## Working on
 
-The comment feature is complete and ready to commit.
+All template names and text are replaced with blog API names.
 
 ## Done
 
-Added comment service, validators, controller and routes, shared pagination and request helpers through the lib barrel, unit and integration tests, and API docs; all 69 tests and checks pass.
+Renamed the package and README, fixed the stale script names, documented the test database and author, and all 69 tests and checks pass.
 
 ## Next
 
