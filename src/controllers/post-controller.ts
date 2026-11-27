@@ -1,22 +1,10 @@
 import type { Request, Response } from "express";
 import { matchedData } from "express-validator";
 
-import { AppError } from "../errors/index.js";
+import { getPagination, getUserId } from "../lib/index.js";
 import { postService } from "../services/index.js";
 
-const getUserId = (req: Request) => {
-  if (!req.user) throw new AppError(401, "Unauthorized");
-  return req.user.id;
-};
-
 const getPostId = (req: Request) => matchedData<{ id: string }>(req, { locations: ["params"] }).id;
-
-const getPagination = (req: Request) => {
-  const { page = 1, pageSize = 20 } = matchedData<{ page?: number; pageSize?: number }>(req, {
-    locations: ["query"],
-  });
-  return { page, pageSize };
-};
 
 export const createPost = async (req: Request, res: Response) => {
   const post = await postService.createPost(getUserId(req), req.body);

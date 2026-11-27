@@ -1,5 +1,6 @@
 import { AppError } from "../errors/index.js";
-import prisma from "../lib/db.js";
+import type { PaginationInput } from "../lib/index.js";
+import { db as prisma, getPageValues, makePagination } from "../lib/index.js";
 
 const postSelect = {
   id: true,
@@ -12,30 +13,22 @@ const postSelect = {
 } as const;
 
 type PostInput = { title: string; content: string; published?: boolean };
-type PaginationInput = { page?: number; pageSize?: number };
 type PostFilter = { published?: boolean; authorId?: string };
 
-const DEFAULT_PAGE_SIZE = 20;
-
-const listPosts = async (
-  where: PostFilter,
-  { page = 1, pageSize = DEFAULT_PAGE_SIZE }: PaginationInput = {},
-) => {
+const listPosts = async (where: PostFilter, pagination: PaginationInput = {}) => {
+  const { page, pageSize, skip } = getPageValues(pagination);
   const [posts, totalItems] = await Promise.all([
     prisma.post.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      skip: (page - 1) * pageSize,
+      skip,
       take: pageSize,
       select: postSelect,
     }),
     prisma.post.count({ where }),
   ]);
 
-  return {
-    posts,
-    pagination: { page, pageSize, totalItems, totalPages: Math.ceil(totalItems / pageSize) },
-  };
+  return { posts, pagination: makePagination(page, pageSize, totalItems) };
 };
 
 export const createPost = (authorId: string, { title, content, published }: PostInput) =>
