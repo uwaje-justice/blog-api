@@ -2,8 +2,6 @@
 
 A REST API for a blog where users write posts and readers comment on them.
 
-![Screenshot of the Blog API running](./docs/screenshot.png)
-
 **Live:** https://blog-api-uqms.onrender.com
 
 ## Why I built it
@@ -21,6 +19,16 @@ This is the backend for The Odin Project blog API exercise. The idea is to run o
 - Allow only the two configured front-end origins to call the API with cookies.
 - Limit requests per IP, with a tighter limit on login and registration.
 - Validate every request body, parameter, and query value before using it.
+
+## API demo
+
+These Postman screenshots show a user registering, creating a published post, and reading it back.
+
+![Registering a user in Postman](./docs/screenshots/screenshot-1.png)
+
+![Creating a published post in Postman](./docs/screenshots/screenshot-2.png)
+
+![Listing published posts in Postman](./docs/screenshots/screenshot-3.png)
 
 ## Tech stack
 

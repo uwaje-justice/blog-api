@@ -4,11 +4,11 @@
 
 ## Working on
 
-The API is deployed on Render and reachable on the live URL.
+The README now shows the Postman screenshots from the user.
 
 ## Done
 
-Fixed the Render build, deployed to https://blog-api-uqms.onrender.com, verified the health and posts endpoints, and updated the README.
+Added the three screenshots in a demo section, removed the broken placeholder image, and updated progress.
 
 ## Next
 
