@@ -11,6 +11,8 @@ export default defineConfig({
       NODE_ENV: "test",
       DATABASE_URL: process.env.TEST_DATABASE_URL ?? "",
       JWT_SECRET: "test-secret-test-secret-test-secret",
+      AUTHOR_CLIENT: "http://localhost:5173",
+      PUBLIC_CLIENT: "http://localhost:5174",
     },
   },
 });

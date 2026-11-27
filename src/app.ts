@@ -3,14 +3,14 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
-import { passport } from "./lib/index.js";
+import { corsOptions, passport } from "./lib/index.js";
 import { errorHandler, notFoundHandler } from "./middleware/index.js";
 import { authRouter, commentRouter, healthRouter, postRouter } from "./routes/index.js";
 
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

@@ -7,10 +7,12 @@ import { authService } from "../services/index.js";
 
 const COOKIE_NAME = "token";
 
+const isProduction = env("NODE_ENV", "development") === "production";
+
 const cookieOptions = {
   httpOnly: true,
-  secure: env("NODE_ENV", "development") === "production",
-  sameSite: "lax" as const,
+  secure: isProduction,
+  sameSite: (isProduction ? "none" : "lax") as "none" | "lax",
 };
 
 const setAuthCookie = (res: Response, userId: string | number) =>
